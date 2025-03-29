@@ -3,9 +3,13 @@ package ru.cherepanov.test.task.dynamica.model;
 import org.springframework.validation.BindingResult;
 
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WebResult {
-    private boolean isValid;
+
+    private final boolean isValid;
+    private final Logger log = Logger.getLogger(WebResult.class.getName());
 
     public static WebResult withoutValid() {
         return new WebResult(true);
@@ -15,7 +19,7 @@ public class WebResult {
         return new WebResult(result);
     }
 
-    private WebResult(boolean isValid){
+    private WebResult(boolean isValid) {
         this.isValid = isValid;
     }
 
@@ -24,13 +28,14 @@ public class WebResult {
     }
 
     public WebResult onSuccessVoid(Runnable action) {
-        try{
+        try {
             if (this.isValid) {
                 action.run();
             }
-        } finally {
-            return this;
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage());
         }
+        return this;
     }
 
     public String fold(Supplier<String> onError, Supplier<String> onSuccess) {

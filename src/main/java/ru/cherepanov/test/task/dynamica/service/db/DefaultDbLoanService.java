@@ -4,12 +4,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import ru.cherepanov.test.task.dynamica.exception.BookNotFoundException;
-import ru.cherepanov.test.task.dynamica.exception.ClientNotFoundException;
+import ru.cherepanov.test.task.dynamica.model.domain.Book;
+import ru.cherepanov.test.task.dynamica.model.domain.Client;
+import ru.cherepanov.test.task.dynamica.model.domain.Loan;
 import ru.cherepanov.test.task.dynamica.model.request.TakeBookRequest;
-import ru.cherepanov.test.task.dynamica.model.response.BookResponse;
-import ru.cherepanov.test.task.dynamica.model.response.ClientResponse;
 import ru.cherepanov.test.task.dynamica.model.response.LoanResponse;
+import ru.cherepanov.test.task.dynamica.repository.BookRepository;
+import ru.cherepanov.test.task.dynamica.repository.ClientRepository;
 import ru.cherepanov.test.task.dynamica.repository.LoanRepository;
 import ru.cherepanov.test.task.dynamica.service.mapper.LoanMapper;
 
@@ -23,19 +24,19 @@ public class DefaultDbLoanService implements DbLoanService {
 
     @Value("${db.find-all.loan.limit}")
     private int findAllLimit;
-    private final DbBookService dbBookService;
-    private final DbClientService dbClientService;
+    private final BookRepository bookRepository;
+    private final ClientRepository clientRepository;
     private final LoanMapper loanMapper;
     private final LoanRepository loanRepository;
 
     public DefaultDbLoanService(
-            DbBookService dbBookService,
-            DbClientService dbClientService,
+            BookRepository bookRepository,
+            ClientRepository clientRepository,
             LoanMapper loanMapper,
             LoanRepository loanRepository
     ) {
-        this.dbBookService = dbBookService;
-        this.dbClientService = dbClientService;
+        this.bookRepository = bookRepository;
+        this.clientRepository = clientRepository;
         this.loanRepository = loanRepository;
         this.loanMapper = loanMapper;
     }
@@ -43,31 +44,32 @@ public class DefaultDbLoanService implements DbLoanService {
     @Transactional
     @Override
     public void takeBook(TakeBookRequest takeBookRequest) {
-        BookResponse bookResponse = Optional.of(takeBookRequest)
-                .map(TakeBookRequest::getBookId)
-                .flatMap(dbBookService::findById)
-                .orElseThrow(() -> new BookNotFoundException(takeBookRequest.getBookId()));
-
-        ClientResponse clientResponse = Optional.of(takeBookRequest)
-                .map(TakeBookRequest::getClientId)
-                .flatMap(dbClientService::findById)
-                .orElseThrow(() -> new ClientNotFoundException(takeBookRequest.getClientId()));
-
         Optional.of(takeBookRequest)
-                .map(takeBookRequestLocal ->
-                        loanMapper.toEntity(takeBookRequest, clientResponse, bookResponse))
+                .map(this::createWithAttachBookAndClient)
+                .filter(loanEntity ->
+                        !loanRepository.existsByBookIdAndReturnDateIsNull(loanEntity.getBook().getId()))
                 .ifPresent(loanRepository::save);
     }
 
-    @Transactional
     @Override
-    public List<LoanResponse> findAll(int pageNumber) {
+    public List<LoanResponse> findPage(int pageNumber) {
         return Optional.of(pageNumber)
                 .map(pageNumberLocal -> PageRequest.of(pageNumber, findAllLimit))
-                .map(loanRepository::findAll)
+                .map(loanRepository::findPageWithClientAndBook)
                 .map(page -> page.map(loanMapper::toResponse))
                 .map(Streamable::get)
                 .map(loans -> loans.collect(Collectors.toList()))
                 .orElseThrow(IllegalStateException::new);
+    }
+
+    private Loan createWithAttachBookAndClient(TakeBookRequest takeBookRequest) {
+        Book book = bookRepository.getReferenceById(takeBookRequest.getBookId());
+        Client client= clientRepository.getReferenceById(takeBookRequest.getClientId());
+
+        Loan loan = new Loan();
+        loan.setClient(client);
+        loan.setBook(book);
+
+        return loan;
     }
 }

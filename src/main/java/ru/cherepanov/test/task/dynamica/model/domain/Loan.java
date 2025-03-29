@@ -1,38 +1,28 @@
 package ru.cherepanov.test.task.dynamica.model.domain;
 
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
-
 import java.time.LocalDate;
 
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
-@Table(name = "loans")
+@Table(name = "loans", schema = "library")
+@SequenceGenerator(name = "loan_gen", sequenceName = "loan_seq", allocationSize = 1)
 public class Loan {
 
     @Id
-    @GeneratedValue(strategy = SEQUENCE)
+    @GeneratedValue(strategy = SEQUENCE, generator = "loan_gen")
     private Long id;
 
-    @Column(name = "book_id", nullable = false)
-    private Long bookId;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "book_id", referencedColumnName = "id",  updatable = false)
+    private Book book;
 
-    @Column(name = "client_id", nullable = false)
-    private Long clientId;
-
-    @Column(name = "client_full_name", nullable = false, length = 255)
-    private String clientFullName;
-
-    @Column(name = "client_birth_day", nullable = false)
-    private LocalDate clientBirthDay;
-
-    @Column(name = "book_title", nullable = false, length = 255)
-    private String bookTitle;
-
-    @Column(name = "book_isbn", nullable = false, length = 255)
-    private String bookIsbn;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "client_id", referencedColumnName = "id", updatable = false)
+    private Client client;
 
     @Column(name = "loan_date", nullable = false)
     @CreationTimestamp
@@ -40,6 +30,7 @@ public class Loan {
 
     @Column(name = "return_date")
     private LocalDate returnDate;
+
 
     public Long getId() {
         return id;
@@ -49,67 +40,27 @@ public class Loan {
         this.id = id;
     }
 
-    public Long getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public Client getClient() {
+        return client;
     }
 
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getClientFullName() {
-        return clientFullName;
-    }
-
-    public void setClientFullName(String clientFullName) {
-        this.clientFullName = clientFullName;
-    }
-
-    public LocalDate getClientBirthDay() {
-        return clientBirthDay;
-    }
-
-    public void setClientBirthDay(LocalDate clientBirthDay) {
-        this.clientBirthDay = clientBirthDay;
-    }
-
-    public String getBookTitle() {
-        return bookTitle;
-    }
-
-    public void setBookTitle(String bookTitle) {
-        this.bookTitle = bookTitle;
-    }
-
-    public String getBookIsbn() {
-        return bookIsbn;
-    }
-
-    public void setBookIsbn(String bookIsbn) {
-        this.bookIsbn = bookIsbn;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public LocalDate getLoanDate() {
         return loanDate;
     }
 
-    public void setLoanDate(LocalDate loanDate) {
-        this.loanDate = loanDate;
-    }
-
     public LocalDate getReturnDate() {
         return returnDate;
-    }
-
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
     }
 }

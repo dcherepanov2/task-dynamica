@@ -2,10 +2,12 @@ package ru.cherepanov.test.task.dynamica.model.request;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 public class ClientSaveRequest {
 
+    @NotBlank(message = "ФИО не должно быть пустым")
     private String fullName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")

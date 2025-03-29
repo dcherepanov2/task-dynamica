@@ -3,7 +3,6 @@ package ru.cherepanov.test.task.dynamica.model.request;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 import static ru.cherepanov.test.task.dynamica.constant.BookRequestRegexConstant.ISBN_REGEX_PATTERN;
 
@@ -21,8 +20,6 @@ public class BookEditRequest {
     @NotBlank(message = "ISBN не должен быть пустым")
     @Pattern(regexp = ISBN_REGEX_PATTERN, message = "ISBN должен состоять из 13 цифр")
     private String isbn;
-
-    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -54,13 +51,5 @@ public class BookEditRequest {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

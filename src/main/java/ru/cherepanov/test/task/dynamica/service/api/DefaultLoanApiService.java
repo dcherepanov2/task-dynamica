@@ -7,7 +7,7 @@ import ru.cherepanov.test.task.dynamica.service.db.DbLoanService;
 import java.util.List;
 
 @Service
-public class DefaultLoanApiService implements LoanApiService{
+public class DefaultLoanApiService implements LoanApiService {
 
     private final DbLoanService dbLoanService;
 
@@ -17,6 +17,6 @@ public class DefaultLoanApiService implements LoanApiService{
 
     @Override
     public List<LoanResponse> findPage(int pageNumber) {
-        return dbLoanService.findAll(pageNumber);
+        return dbLoanService.findPage(pageNumber);
     }
 }

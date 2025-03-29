@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.cherepanov.test.task.dynamica.exception.BookNotFoundException;
 import ru.cherepanov.test.task.dynamica.model.request.BookEditRequest;
 import ru.cherepanov.test.task.dynamica.model.request.BookSaveRequest;
 import ru.cherepanov.test.task.dynamica.model.response.BookResponse;
 import ru.cherepanov.test.task.dynamica.service.mapper.BookMapper;
 import ru.cherepanov.test.task.dynamica.repository.BookRepository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
@@ -29,9 +30,10 @@ public class DefaultDbBookService implements DbBookService {
 
     @Transactional
     @Override
-    public Optional<BookResponse> findById(Long id) {
+    public BookResponse findById(Long id) {
         return bookRepository.findById(id)
-                .map(bookMapper::toResponse);
+                .map(bookMapper::toResponse)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     @Override

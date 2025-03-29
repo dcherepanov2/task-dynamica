@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import ru.cherepanov.test.task.dynamica.model.request.ClientEditRequest;
 import ru.cherepanov.test.task.dynamica.model.request.ClientSaveRequest;
 import ru.cherepanov.test.task.dynamica.model.response.ClientResponse;
-import ru.cherepanov.test.task.dynamica.exception.ClientNotFoundException;
 import ru.cherepanov.test.task.dynamica.service.db.DbClientService;
 
 @Service
@@ -36,8 +35,7 @@ public class DefaultClientWebService implements ClientWebService {
 
     @Override
     public void prepareEditClientForm(Long id, Model model) {
-        ClientResponse clientResponse = dbClientService.findById(id)
-                .orElseThrow(() -> new ClientNotFoundException(id));
+        ClientResponse clientResponse = dbClientService.findById(id);
         model.addAttribute("client", clientResponse);
     }
 

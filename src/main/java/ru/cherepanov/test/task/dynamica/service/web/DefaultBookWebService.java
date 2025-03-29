@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import ru.cherepanov.test.task.dynamica.model.request.BookEditRequest;
 import ru.cherepanov.test.task.dynamica.model.request.BookSaveRequest;
 import ru.cherepanov.test.task.dynamica.model.response.BookResponse;
-import ru.cherepanov.test.task.dynamica.exception.BookNotFoundException;
 import ru.cherepanov.test.task.dynamica.service.db.DbBookService;
 
 @Service
@@ -24,8 +23,7 @@ public class DefaultBookWebService implements BookWebService {
 
     @Override
     public void prepareEditForm(Long id, Model model) {
-        BookResponse book = dbBookService.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+        BookResponse book = dbBookService.findById(id);
         model.addAttribute("book", book);
     }
 

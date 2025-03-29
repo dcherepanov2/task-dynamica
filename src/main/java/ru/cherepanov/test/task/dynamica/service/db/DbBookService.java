@@ -6,15 +6,13 @@ import ru.cherepanov.test.task.dynamica.model.request.BookEditRequest;
 import ru.cherepanov.test.task.dynamica.model.request.BookSaveRequest;
 import ru.cherepanov.test.task.dynamica.model.response.BookResponse;
 
-import java.util.Optional;
-
 public interface DbBookService {
 
-    Optional<BookResponse> findById(Long id);
+    BookResponse findById(Long id);
+
+    Page<BookResponse> findAll(int pageNumber);
 
     void save(BookSaveRequest bookSaveRequest);
 
     void edit(BookEditRequest bookEditRequest);
-
-    Page<BookResponse> findAll(int pageNumber);
 }

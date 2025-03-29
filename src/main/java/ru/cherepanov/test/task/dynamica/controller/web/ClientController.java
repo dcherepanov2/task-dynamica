@@ -51,7 +51,7 @@ public class ClientController {
         return WebResult.withValid(result)
                 .onSuccessVoid(() -> clientWebService.save(clientSaveRequest))
                 .fold(
-                        () -> "client/add",
+                        () -> "clients/add",
                         () -> "redirect:/clients"
                 );
     }

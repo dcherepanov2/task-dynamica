@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.cherepanov.test.task.dynamica.exception.ClientNotFoundException;
 import ru.cherepanov.test.task.dynamica.model.request.ClientEditRequest;
 import ru.cherepanov.test.task.dynamica.model.request.ClientSaveRequest;
 import ru.cherepanov.test.task.dynamica.model.response.ClientResponse;
@@ -27,9 +28,10 @@ public class DefaultDbClientService implements DbClientService {
     }
 
     @Override
-    public Optional<ClientResponse> findById(Long id) {
+    public ClientResponse findById(Long id) {
         return clientRepository.findById(id)
-                .map(clientMapper::toResponse);
+                .map(clientMapper::toResponse)
+                .orElseThrow(() -> new ClientNotFoundException(id));
     }
 
     @Override

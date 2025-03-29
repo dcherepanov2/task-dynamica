@@ -5,11 +5,9 @@ import ru.cherepanov.test.task.dynamica.model.request.ClientEditRequest;
 import ru.cherepanov.test.task.dynamica.model.request.ClientSaveRequest;
 import ru.cherepanov.test.task.dynamica.model.response.ClientResponse;
 
-import java.util.Optional;
-
 public interface DbClientService {
 
-    Optional<ClientResponse> findById(Long id);
+    ClientResponse findById(Long id);
 
     void save(ClientSaveRequest clientSaveRequest);
 
