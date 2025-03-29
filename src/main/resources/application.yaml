@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: test.task.dynamica
+  datasource:
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/task_dynamica
+    driver-class-name: org.postgresql.Driver
+    hikari.schema: library
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:/migration/schema.sql
+
+db:
+  find-all:
+    books.limit: 10
+    clients.limit: 10
+    loan.limit: 10
