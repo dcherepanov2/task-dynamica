@@ -13,6 +13,4 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             countQuery = "SELECT COUNT(l) FROM Loan l"
     )
     Page<Loan> findPageWithClientAndBook(Pageable pageable);
-
-    boolean existsByBookIdAndReturnDateIsNull(Long bookId);
 }

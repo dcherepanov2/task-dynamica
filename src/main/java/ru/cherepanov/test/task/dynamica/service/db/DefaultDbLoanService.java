@@ -46,8 +46,6 @@ public class DefaultDbLoanService implements DbLoanService {
     public void takeBook(TakeBookRequest takeBookRequest) {
         Optional.of(takeBookRequest)
                 .map(this::createWithAttachBookAndClient)
-                .filter(loanEntity ->
-                        !loanRepository.existsByBookIdAndReturnDateIsNull(loanEntity.getBook().getId()))
                 .ifPresent(loanRepository::save);
     }
 
